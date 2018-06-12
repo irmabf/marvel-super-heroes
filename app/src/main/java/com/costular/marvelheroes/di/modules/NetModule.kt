@@ -19,26 +19,26 @@ class NetModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
-        val client =
-                OkHttpClient.Builder()
-                        .addInterceptor(HttpLoggingInterceptor().apply {
-                            level = HttpLoggingInterceptor.Level.BODY
-                        })
-                        .build()
+    fun provideOkHttpClient(): OkHttpClient =
+            OkHttpClient.Builder()
+                    .addInterceptor(HttpLoggingInterceptor().apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+                    })
+                    .build()
 
-        return Retrofit.Builder()
-                .baseUrl(BuildConfig.API_URL)
-                .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .build()
+    @Provides
+    @Singleton
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
+                    Retrofit.Builder()
+                            .baseUrl(BuildConfig.API_URL)
+                            .client(okHttpClient)
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                            .build()
 
-    }
 
     @Provides
     @Singleton
     fun provideMarvelHeroesService(retrofit: Retrofit): MarvelHeroesService =
             retrofit.create(MarvelHeroesService::class.java)
-
 }
